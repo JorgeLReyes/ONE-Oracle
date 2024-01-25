@@ -1,4 +1,4 @@
-let d = document,
+const d = document,
   options = d.getElementById("options"),
   text = d.getElementById("text"),
   result = d.getElementById("result"),
@@ -35,8 +35,8 @@ const deleteMessage = () =>
 
 const mensajes = ({ mensaje, color, icon }) => {
   if (d.querySelector(".alert") !== null) {
-    clearTimeout(timer);
     deleteMessage();
+    clearTimeout(timer);
   }
 
   const section = `
@@ -75,8 +75,12 @@ d.addEventListener("click", (e) => {
         icon: "<i class='bx bxs-check-circle'></i>",
       });
     } else {
+      let mensaje =
+        text.value.length >= 1000
+          ? "Máximo 1000 caracteres"
+          : "Solo letras minusculas sin acentos";
       mensajes({
-        mensaje: `Solo letras minusculas sin acentos`,
+        mensaje,
         color: "#e24d4c",
         icon: "<i class='bx bxs-x-circle' ></i>",
       });
@@ -84,22 +88,30 @@ d.addEventListener("click", (e) => {
   }
 
   if (e.target === copy || e.target.parentElement === copy) {
-    navigator.clipboard
-      .writeText(result.value)
-      .then((e) =>
-        mensajes({
-          mensaje: "Texto copiado correctamente",
-          color: "#0abf30",
-          icon: "<i class='bx bxs-check-circle'></i>",
-        })
-      )
-      .catch((e) =>
-        mensajes({
-          mensaje: "Error al copiar el texto",
-          color: "#e24d4c",
-          icon: "<i class='bx bxs-x-circle' ></i>",
-        })
-      );
+    if (result.value.length > 0)
+      navigator.clipboard
+        .writeText(result.value)
+        .then((e) =>
+          mensajes({
+            mensaje: "Texto copiado correctamente",
+            color: "#0abf30",
+            icon: "<i class='bx bxs-check-circle'></i>",
+          })
+        )
+        .catch((e) =>
+          mensajes({
+            mensaje: "Error al copiar el texto",
+            color: "#e24d4c",
+            icon: "<i class='bx bxs-x-circle' ></i>",
+          })
+        );
+    else {
+      mensajes({
+        mensaje: "El texto está vacío",
+        color: "#e24d4c",
+        icon: "<i class='bx bxs-x-circle'></i>",
+      });
+    }
   }
 
   if (e.target.matches("#close") || e.target.matches("#close *"))
